@@ -1,0 +1,93 @@
+<section>
+  <header class="page-header">
+    <h2>Órdenes de servicio</h2>
+    <a *appSiPermiso="'ORDEN_REGISTRAR'" class="btn btn-primary" routerLink="nueva"
+      >+ Nueva orden</a
+    >
+  </header>
+  <form class="card filtros" [formGroup]="form" (ngSubmit)="buscar()" novalidate>
+    <label>Placa<input class="input" formControlName="placa" placeholder="ABC-123" /></label
+    ><label
+      >Estado<select class="input" formControlName="estado">
+        <option value="">Todos</option>
+        <option value="REGISTRADA">REGISTRADA</option>
+        <option value="ANULADA">ANULADA</option>
+      </select></label
+    ><label>Desde<input class="input" type="date" formControlName="desde" /></label
+    ><label>Hasta<input class="input" type="date" formControlName="hasta" /></label>
+    <div class="acciones">
+      <button class="btn btn-primary" type="submit" [disabled]="cargando()">Buscar</button
+      ><button class="btn" type="button" [disabled]="cargando()" (click)="limpiar()">
+        Limpiar
+      </button>
+    </div>
+    @if (form.hasError('rangoFechas')) {
+      <small class="error">Desde no puede ser posterior a hasta.</small>
+    }
+  </form>
+  @if (error()) {
+    <div class="alerta" role="alert">{{ error() }}</div>
+  }
+  @if (aviso()) {
+    <p class="exito" role="status">{{ aviso() }}</p>
+  }
+  @if (seleccionada(); as o) {
+    <app-anular-orden
+      [orden]="o"
+      (completada)="anulada($event)"
+      (cancelar)="seleccionada.set(null)"
+    />
+  }
+  @if (cargando()) {
+    <p role="status">Cargando órdenes...</p>
+  } @else {
+    <div class="tabla-scroll">
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>Número</th>
+            <th>Fecha</th>
+            <th>Placa</th>
+            <th>Cliente</th>
+            <th>Estado</th>
+            <th>Total (S/)</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (o of items(); track o.id) {
+            <tr>
+              <td>{{ o.numero }}</td>
+              <td>{{ o.fecha | date: 'dd/MM/yyyy HH:mm' }}</td>
+              <td>{{ o.placa }}</td>
+              <td>{{ o.clienteNombre }}</td>
+              <td>
+                <span class="badge" [class.inactivo]="o.estado === 'ANULADA'">{{ o.estado }}</span>
+              </td>
+              <td>{{ o.total | number: '1.2-2' }}</td>
+              <td>
+                <div class="acciones">
+                  <a class="btn" [routerLink]="[o.id]">Ver detalle</a>
+                  @if (o.estado === 'REGISTRADA') {
+                    <button
+                      *appSiPermiso="'ORDEN_ANULAR'"
+                      class="btn btn-peligro"
+                      type="button"
+                      (click)="seleccionada.set(o)"
+                    >
+                      Anular
+                    </button>
+                  }
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="7" class="vacio">No hay órdenes para los filtros seleccionados.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

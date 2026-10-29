@@ -1,0 +1,71 @@
+<section>
+  <header class="page-header">
+    <h2>Vehículos</h2>
+    <a *appSiPermiso="'VEHICULO_ESCRIBIR'" class="btn btn-primary" routerLink="nuevo"
+      >+ Nuevo vehículo</a
+    >
+  </header>
+  <label class="filtro"
+    >Cliente<select class="input" (change)="filtrarCliente($any($event.target).value)">
+      <option value="">Todos los clientes</option>
+      @for (c of clientes(); track c.id) {
+        <option [value]="c.id">{{ c.nombres }}</option>
+      }
+    </select></label
+  >
+  @if (error()) {
+    <div class="alerta" role="alert">{{ error() }}</div>
+  }
+  @if (aviso()) {
+    <p class="exito" role="status">{{ aviso() }}</p>
+  }
+  @if (cargando()) {
+    <p role="status">Cargando vehiculos...</p>
+  } @else {
+    <div class="tabla-scroll">
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>Placa</th>
+            <th>Marca</th>
+            <th>Modelo</th>
+            <th>Año</th>
+            <th>Cliente</th>
+            <th *appSiPermiso="'VEHICULO_ESCRIBIR'">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (s of items(); track s.id) {
+            <tr>
+              <td>{{ s.placa }}</td>
+              <td>{{ s.marca }}</td>
+              <td>{{ s.modelo }}</td>
+              <td>{{ s.anio }}</td>
+              <td>{{ s.clienteNombre }}</td>
+              <td *appSiPermiso="'VEHICULO_ESCRIBIR'">
+                <div class="acciones">
+                  <a class="btn" [routerLink]="[s.id, 'editar']">Editar</a
+                  ><button
+                    type="button"
+                    class="btn btn-peligro"
+                    [disabled]="procesando()"
+                    (click)="eliminar(s)"
+                  >
+                    Eliminar
+                  </button>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="vacio">No hay vehiculos para mostrar.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+  @if (error()) {
+    <button type="button" class="btn" (click)="cargar()">Reintentar</button>
+  }
+</section>

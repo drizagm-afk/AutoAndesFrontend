@@ -1,0 +1,11 @@
+<nav class="sidebar" aria-label="Navegación principal">
+  <p class="titulo">Módulos</p>
+  @for (item of menu(); track item.ruta) {
+    <a
+      [routerLink]="item.ruta"
+      routerLinkActive="activo"
+      [routerLinkActiveOptions]="{ exact: true }"
+      ><span aria-hidden="true">{{ item.icono }}</span> {{ item.etiqueta }}</a
+    >
+  }
+</nav>

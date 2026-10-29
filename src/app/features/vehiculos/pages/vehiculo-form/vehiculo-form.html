@@ -1,0 +1,60 @@
+<section>
+  <h2>{{ id() ? 'Editar vehículo' : 'Nuevo vehículo' }}</h2>
+  @if (error()) {
+    <div class="alerta" role="alert">{{ error() }}</div>
+  }
+  @if (cargando()) {
+    <p role="status">Cargando...</p>
+  }
+  <form class="card formulario" [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+    <fieldset [disabled]="cargando() || guardando() || noDisponible()">
+      <label for="placa">Placa</label
+      ><input id="placa" class="input" type="text" formControlName="placa" /><app-field-error
+        [control]="form.controls.placa"
+        [server]="erroresServidor()['placa']"
+        mensaje="La placa debe tener el formato ABC-123."
+      /><label for="marca">Marca</label
+      ><input id="marca" class="input" type="text" formControlName="marca" /><app-field-error
+        [control]="form.controls.marca"
+        [server]="erroresServidor()['marca']"
+        mensaje="La marca es obligatoria (máximo 40 caracteres)."
+      /><label for="modelo">Modelo</label
+      ><input id="modelo" class="input" type="text" formControlName="modelo" /><app-field-error
+        [control]="form.controls.modelo"
+        [server]="erroresServidor()['modelo']"
+        mensaje="El modelo es obligatorio (máximo 40 caracteres)."
+      /><label for="anio">Año</label
+      ><input
+        id="anio"
+        class="input"
+        type="number"
+        formControlName="anio"
+        step="1"
+      /><app-field-error
+        [control]="form.controls.anio"
+        [server]="erroresServidor()['anio']"
+        mensaje="El año debe ser un entero entre 1990 y 2027."
+      /><label for="clienteId">Cliente</label
+      ><select id="clienteId" class="input" formControlName="clienteId">
+        <option [ngValue]="null">Seleccione un cliente</option>
+        @for (c of clientes(); track c.id) {
+          <option [ngValue]="c.id">{{ c.nombres }}</option>
+        }</select
+      ><app-field-error
+        [control]="form.controls.clienteId"
+        [server]="erroresServidor()['clienteId']"
+        mensaje="Seleccione un cliente."
+      />
+      <div class="acciones">
+        <a class="btn" routerLink="/vehiculos">Cancelar</a
+        ><button
+          class="btn btn-primary"
+          type="submit"
+          [disabled]="cargando() || guardando() || noDisponible()"
+        >
+          {{ guardando() ? 'Guardando...' : id() ? 'Actualizar' : 'Registrar' }}
+        </button>
+      </div>
+    </fieldset>
+  </form>
+</section>
