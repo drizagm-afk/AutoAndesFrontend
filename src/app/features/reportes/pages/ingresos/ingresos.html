@@ -1,0 +1,46 @@
+<section>
+  <h2>Ingresos por servicio</h2>
+  <p>Órdenes registradas; las anuladas se excluyen del reporte.</p>
+  <form class="card filtros" [formGroup]="form" (ngSubmit)="buscar()" novalidate>
+    <label>Desde<input class="input" type="date" formControlName="desde" /></label
+    ><label>Hasta<input class="input" type="date" formControlName="hasta" /></label
+    ><button class="btn btn-primary" type="submit" [disabled]="cargando()">Consultar</button>
+    @if (form.hasError('rangoFechas')) {
+      <small class="error">Desde no puede ser posterior a hasta.</small>
+    }
+  </form>
+  @if (error()) {
+    <div class="alerta" role="alert">{{ error() }}</div>
+  }
+  @if (cargando()) {
+    <p role="status">Cargando reporte...</p>
+  } @else {
+    <div class="tabla-scroll">
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Servicio</th>
+            <th>Cantidad total</th>
+            <th>Importe total (S/)</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (r of items(); track r.codigo) {
+            <tr>
+              <td>{{ r.codigo }}</td>
+              <td>{{ r.servicio }}</td>
+              <td>{{ r.cantidadTotal }}</td>
+              <td>{{ r.importeTotal | number: '1.2-2' }}</td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="4" class="vacio">No hay ingresos en el período seleccionado.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <p class="total">Total del período: S/ {{ total() | number: '1.2-2' }}</p>
+  }
+</section>

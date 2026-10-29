@@ -1,0 +1,91 @@
+<section>
+  <header class="page-header">
+    <h2>Detalle de orden</h2>
+    <a class="btn" routerLink="/ordenes">Volver a órdenes</a>
+  </header>
+  @if (error()) {
+    <div class="alerta" role="alert">{{ error() }}</div>
+    <button class="btn" type="button" (click)="cargar()">Reintentar</button>
+  }
+  @if (cargando()) {
+    <p role="status">Cargando orden...</p>
+  }
+  @if (aviso()) {
+    <p class="exito" role="status">{{ aviso() }}</p>
+  }
+  @if (orden(); as o) {
+    <div class="card">
+      <header class="page-header">
+        <h3>{{ o.numero }}</h3>
+        <span class="badge" [class.inactivo]="o.estado === 'ANULADA'">{{ o.estado }}</span>
+      </header>
+      <dl class="datos-orden">
+        <div>
+          <dt>Fecha</dt>
+          <dd>{{ o.fecha | date: 'dd/MM/yyyy HH:mm' }}</dd>
+        </div>
+        <div>
+          <dt>Vehículo</dt>
+          <dd>{{ o.placa }}</dd>
+        </div>
+        <div>
+          <dt>Cliente</dt>
+          <dd>{{ o.clienteNombre }}</dd>
+        </div>
+        <div>
+          <dt>Kilometraje</dt>
+          <dd>{{ o.kilometraje | number: '1.0-0' }}</dd>
+        </div>
+        <div>
+          <dt>Registrado por</dt>
+          <dd>{{ o.usuarioRegistro }}</dd>
+        </div>
+      </dl>
+      <div class="tabla-scroll">
+        <table class="tabla">
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Servicio</th>
+              <th>Cantidad</th>
+              <th>Precio (S/)</th>
+              <th>Subtotal (S/)</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (d of o.detalles; track d.id) {
+              <tr>
+                <td>{{ d.codigo }}</td>
+                <td>{{ d.servicio }}</td>
+                <td>{{ d.cantidad }}</td>
+                <td>{{ d.precioUnitario | number: '1.2-2' }}</td>
+                <td>{{ d.subtotal | number: '1.2-2' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="total">Total: S/ {{ o.total | number: '1.2-2' }}</p>
+      @if (o.motivoAnulacion) {
+        <p><strong>Motivo de anulación:</strong> {{ o.motivoAnulacion }}</p>
+      }
+      @if (o.estado === 'REGISTRADA' && !anulando()) {
+        <button
+          *appSiPermiso="'ORDEN_ANULAR'"
+          class="btn btn-peligro"
+          type="button"
+          (click)="anulando.set(true)"
+        >
+          Anular orden
+        </button>
+      }
+    </div>
+    @if (anulando()) {
+      <app-anular-orden
+        [orden]="o"
+        (completada)="anulada($event)"
+        (cancelar)="anulando.set(false)"
+      />
+    }
+  }
+</section>

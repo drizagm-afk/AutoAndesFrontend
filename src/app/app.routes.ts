@@ -28,6 +28,16 @@ export const routes: Routes = [
           import('./features/vehiculos/vehiculos.routes').then((m) => m.VEHICULOS_ROUTES),
       },
       {
+        path: 'ordenes',
+        loadChildren: () =>
+          import('./features/ordenes/ordenes.routes').then((m) => m.ORDENES_ROUTES),
+      },
+      {
+        path: 'reportes',
+        loadChildren: () =>
+          import('./features/reportes/reportes.routes').then((m) => m.REPORTES_ROUTES),
+      },
+      {
         path: 'acceso-denegado',
         loadComponent: () =>
           import('./shared/pages/acceso-denegado/acceso-denegado').then((m) => m.AccesoDenegado),

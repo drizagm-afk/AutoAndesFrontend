@@ -204,3 +204,56 @@ label {
   outline: 2px solid #1f5aa6;
   outline-offset: 2px;
 }
+
+.cabecera-orden,
+.datos-orden {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 18px;
+}
+.cabecera-orden label {
+  display: block;
+  margin-bottom: 6px;
+}
+.cantidad {
+  max-width: 110px;
+  min-width: 85px;
+}
+.total {
+  font-size: 20px;
+  color: #0f2e5c;
+  text-align: right;
+}
+.ayuda {
+  color: #64748b;
+  font-size: 14px;
+}
+.filtros {
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.filtros label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 140px;
+}
+.datos-orden dt {
+  font-weight: 600;
+  color: #64748b;
+  font-size: 13px;
+}
+.datos-orden dd {
+  margin: 4px 0 0;
+}
+.anulacion {
+  margin: 20px 0;
+  border: 1px solid #f0b8b3;
+}
+.anulacion .acciones {
+  margin-top: 12px;
+}
