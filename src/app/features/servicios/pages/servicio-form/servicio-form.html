@@ -1,0 +1,56 @@
+<section>
+  <h2>{{ id() ? 'Editar servicio' : 'Nuevo servicio' }}</h2>
+  @if (error()) {
+    <div class="alerta" role="alert">{{ error() }}</div>
+  }
+  @if (cargando()) {
+    <p role="status">Cargando...</p>
+  }
+  <form class="card formulario" [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+    <fieldset [disabled]="cargando() || guardando() || noDisponible()">
+      <label for="codigo">Código</label
+      ><input id="codigo" class="input" type="text" formControlName="codigo" /><app-field-error
+        [control]="form.controls.codigo"
+        [server]="erroresServidor()['codigo']"
+        mensaje="El código debe tener el formato SRV-000."
+      /><label for="nombre">Nombre</label
+      ><input id="nombre" class="input" type="text" formControlName="nombre" /><app-field-error
+        [control]="form.controls.nombre"
+        [server]="erroresServidor()['nombre']"
+        mensaje="El nombre debe tener entre 3 y 80 caracteres."
+      /><label for="precio">Precio (S/)</label
+      ><input
+        id="precio"
+        class="input"
+        type="number"
+        formControlName="precio"
+        step="0.01"
+      /><app-field-error
+        [control]="form.controls.precio"
+        [server]="erroresServidor()['precio']"
+        mensaje="El precio debe ser mayor que cero, con máximo 2 decimales."
+      /><label for="duracionMin">Duración (minutos)</label
+      ><input
+        id="duracionMin"
+        class="input"
+        type="number"
+        formControlName="duracionMin"
+        step="1"
+      /><app-field-error
+        [control]="form.controls.duracionMin"
+        [server]="erroresServidor()['duracionMin']"
+        mensaje="La duración debe ser un entero entre 15 y 480."
+      />
+      <div class="acciones">
+        <a class="btn" routerLink="/servicios">Cancelar</a
+        ><button
+          class="btn btn-primary"
+          type="submit"
+          [disabled]="cargando() || guardando() || noDisponible()"
+        >
+          {{ guardando() ? 'Guardando...' : id() ? 'Actualizar' : 'Registrar' }}
+        </button>
+      </div>
+    </fieldset>
+  </form>
+</section>

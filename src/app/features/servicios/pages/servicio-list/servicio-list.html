@@ -1,0 +1,81 @@
+<section>
+  <header class="page-header">
+    <h2>Servicios</h2>
+    <a *appSiPermiso="'SERVICIO_ESCRIBIR'" class="btn btn-primary" routerLink="nuevo"
+      >+ Nuevo servicio</a
+    >
+  </header>
+  <label class="filtro"
+    >Buscar servicio<input
+      class="input"
+      placeholder="Código o nombre..."
+      [value]="filtro()"
+      (input)="filtro.set($any($event.target).value)"
+  /></label>
+  @if (error()) {
+    <div class="alerta" role="alert">{{ error() }}</div>
+  }
+  @if (aviso()) {
+    <p class="exito" role="status">{{ aviso() }}</p>
+  }
+  @if (cargando()) {
+    <p role="status">Cargando servicios...</p>
+  } @else {
+    <div class="tabla-scroll">
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Nombre</th>
+            <th>Precio (S/)</th>
+            <th>Duración</th>
+            <th>Estado</th>
+            <th *appSiPermiso="'SERVICIO_ESCRIBIR'">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (s of filtradas(); track s.id) {
+            <tr>
+              <td>{{ s.codigo }}</td>
+              <td>{{ s.nombre }}</td>
+              <td>{{ s.precio | number: '1.2-2' }}</td>
+              <td>{{ s.duracionMin }} min</td>
+              <td>
+                <span class="badge" [class.inactivo]="!s.activo">{{
+                  s.activo ? 'Activo' : 'Inactivo'
+                }}</span>
+              </td>
+              <td *appSiPermiso="'SERVICIO_ESCRIBIR'">
+                <div class="acciones">
+                  <a class="btn" [routerLink]="[s.id, 'editar']">Editar</a
+                  ><button
+                    class="btn"
+                    type="button"
+                    [disabled]="procesando()"
+                    (click)="cambiarEstado(s)"
+                  >
+                    {{ s.activo ? 'Dar de baja' : 'Reactivar' }}</button
+                  ><button
+                    type="button"
+                    class="btn btn-peligro"
+                    [disabled]="procesando()"
+                    (click)="eliminar(s)"
+                  >
+                    Eliminar
+                  </button>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="vacio">No hay servicios para mostrar.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+  @if (error()) {
+    <button type="button" class="btn" (click)="cargar()">Reintentar</button>
+  }
+</section>
