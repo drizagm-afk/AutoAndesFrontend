@@ -18,10 +18,3 @@ export interface LoginResponse {
 export interface Sesion extends LoginResponse {
   expiraEn: number;
 }
-export interface UsuarioActual {
-  id: number;
-  username: string;
-  nombreCompleto: string;
-  roles: string[];
-  permisos: Permiso[];
-}

@@ -48,10 +48,17 @@ export class OrdenForm implements OnInit {
     detalles: this.detalles,
   });
   readonly valores = toSignal(this.form.valueChanges, { initialValue: this.form.getRawValue() });
-  readonly total = computed(() => {
-    this.valores();
-    return this.detalles.controls.reduce((sum, _c, i) => sum + this.subtotalCentimos(i), 0) / 100;
-  });
+  readonly lineas = computed(() =>
+    (this.valores().detalles ?? []).map((detalle) => {
+      const precio =
+        this.servicios().find((servicio) => servicio.id === detalle.servicioId)?.precio ?? 0;
+      const cantidad = Number(detalle.cantidad) || 0;
+      return { precio, subtotal: Math.round(precio * cantidad * 100) / 100 };
+    }),
+  );
+  readonly total = computed(
+    () => Math.round(this.lineas().reduce((suma, linea) => suma + linea.subtotal, 0) * 100) / 100,
+  );
   ngOnInit(): void {
     this.cargar();
   }
@@ -94,21 +101,9 @@ export class OrdenForm implements OnInit {
     }
   }
   usado(id: number, index: number): boolean {
-    this.valores();
-    return this.detalles.controls.some((d, i) => i !== index && d.controls.servicioId.value === id);
-  }
-  precio(index: number): number {
-    this.valores();
-    const id = this.detalles.at(index).controls.servicioId.value;
-    return this.servicios().find((s) => s.id === id)?.precio ?? 0;
-  }
-  private subtotalCentimos(index: number): number {
-    const cantidad = this.detalles.at(index).controls.cantidad.value;
-    return Number.isFinite(cantidad) ? Math.round(this.precio(index) * 100) * cantidad : 0;
-  }
-  subtotal(index: number): number {
-    this.valores();
-    return this.subtotalCentimos(index) / 100;
+    return (this.valores().detalles ?? []).some(
+      (detalle, i) => i !== index && detalle.servicioId === id,
+    );
   }
   guardar(): void {
     if (this.guardando() || this.cargando() || this.noDisponible()) return;

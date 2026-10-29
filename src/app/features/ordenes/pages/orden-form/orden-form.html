@@ -103,8 +103,8 @@
                       mensaje="Cantidad entera de 1 a 5."
                     />
                   </td>
-                  <td>{{ precio(i) | number: '1.2-2' }}</td>
-                  <td>{{ subtotal(i) | number: '1.2-2' }}</td>
+                  <td>{{ lineas()[i].precio | number: '1.2-2' }}</td>
+                  <td>{{ lineas()[i].subtotal | number: '1.2-2' }}</td>
                   <td>
                     <button
                       type="button"

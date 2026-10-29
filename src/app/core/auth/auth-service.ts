@@ -1,9 +1,9 @@
-import { Service, computed, signal, inject, DestroyRef } from '@angular/core';
+import { Service, signal, inject, DestroyRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { map, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { LoginResponse, Sesion, Permiso, UsuarioActual } from './auth.model';
+import { LoginResponse, Sesion, Permiso } from './auth.model';
 const CLAVE = 'autoandes.sesion';
 
 @Service()
@@ -13,7 +13,6 @@ export class AuthService {
   private readonly actual = signal<Sesion | null>(this.restaurar());
   private temporizador?: ReturnType<typeof setTimeout>;
   readonly sesion = this.actual.asReadonly();
-  readonly autenticado = computed(() => this.actual() !== null);
   constructor() {
     if (this.actual()) this.programar(this.actual()!);
     inject(DestroyRef).onDestroy(() => clearTimeout(this.temporizador));
@@ -35,9 +34,6 @@ export class AuthService {
           this.programar(s);
         }),
       );
-  }
-  perfil() {
-    return this.http.get<UsuarioActual>(environment.apiUrl + '/auth/me');
   }
   token(): string | null {
     const s = this.actual();
